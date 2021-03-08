@@ -12,7 +12,7 @@
         "Google Maps scraper",
         "Google Reviews scraper",
         "scrape google maps",
-        "Google Places",
+        "Google Places"
     ],
     "homepage": "https://github.com/outscraper/google-maps-scraper-php",
     "license": "MIT",
