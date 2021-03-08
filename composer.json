@@ -1,0 +1,34 @@
+{
+    "name": "outscraper/google-maps-scraper-php",
+    "description": "Python SDK that allows extracting data from Google services via OutScraper API.",
+    "require": {
+        "php": ">=7.4"
+    },
+    "keywords": [
+        "Google",
+        "Outscrpaer",
+        "Google Maps",
+        "Google Reviews",
+        "Google Maps scraper",
+        "Google Reviews scraper",
+        "scrape google maps",
+        "Google Places",
+    ],
+    "homepage": "https://github.com/outscraper/google-maps-scraper-php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vlad",
+            "role": "Developer",
+            "email": "vlad@outscraper.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/outscraper/google-maps-scraper-php/issues"
+    },
+    "autoload": {
+        "files": [
+            "google-maps-scraper.php"
+        ]
+    }
+}
