@@ -1,2 +1,5 @@
-# google-maps-php
-Google maps scraper SDK
+# Google Maps scraper in PHP
+
+PHP SDK for Google Maps and Google Reviews scraper using [OutScraper API](https://outscraper.com).
+
+The API documentation is available here (https://app.outscraper.com/api-docs).
