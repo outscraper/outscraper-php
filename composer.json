@@ -1,6 +1,6 @@
 {
     "name": "outscraper/google-maps-scraper-php",
-    "description": "Python SDK that allows extracting data from Google services via OutScraper API.",
+    "description": "PHP SDK that allows scraping Google Maps and Google Reviews via OutScraper API.",
     "require": {
         "php": ">=7.4"
     },
