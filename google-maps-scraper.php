@@ -10,15 +10,16 @@
  * @link       https://github.com/outscraper/google-maps-scraper-php
  */
 class ApiClient {
-    public $version = '0.0.1';
+    public $version = '1.1.0';
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 12;
+    private $requests_pause = 5;
 
     /**
      * @param string $api_key API KEY from https://app.outscraper.com/profile
      */
-    public function __construct(string $api_key = NULL) {
+    public function __construct(string $api_key = NULL, int $requests_pause = 5) {
         if($api_key == NULL)
             throw new Exception("api_key must have a value");
 
@@ -28,6 +29,16 @@ class ApiClient {
         $headers[] = "X-API-KEY: {$api_key}";
 
         $this->api_headers = $headers;
+        $this->requests_pause = $requests_pause;
+    }
+
+    /**
+     * Fetch up to 100 of your last requests.
+     *
+     * @return array requests history
+     */
+    public function get_requests_history() : array {
+        return $this->make_get_request("requests");
     }
 
     /**
@@ -35,7 +46,7 @@ class ApiClient {
      *
      * @param string $request_id id for the request/task provided by ["id"]
      *
-     * @return array request/task result
+     * @return array result from the archive
      */
     public function get_request_archive(string $request_id) : array {
         if($request_id == NULL)
@@ -70,10 +81,7 @@ class ApiClient {
             "extractContacts" => $extract_contacts,
             "dropDuplicates" => $drop_duplicates,
         ));
-
         $result = $this->make_get_request("maps/search?{$params}");
-
-        sleep(15);
         return $this->wait_request_archive($result["id"]);
     }
 
@@ -92,7 +100,7 @@ class ApiClient {
      *
      * @return array request/task result
      */
-    public function google_maps_business_reviews(
+    public function google_maps_reviews(
         string|array $query, string $language = "en", string $region = NULL, int $organizations_per_query_limit = 1,
         int $limit = 100, string $coordinates = NULL, int $cutoff = NULL, int $cutoff_rating = NULL,
         string $sort = "most_relevant"
@@ -110,23 +118,20 @@ class ApiClient {
         ));
 
         $result = $this->make_get_request("maps/reviews-v2?{$params}");
-
-        sleep(15);
         return $this->wait_request_archive($result["id"]);
     }
 
-    private function wait_request_archive(string $request_id, int $requests_pause = 5) : array {
-        $ttl = $this->max_ttl / $requests_pause;
+    private function wait_request_archive(string $request_id) : array {
+        $ttl = $this->max_ttl / $this->requests_pause;
 
         while ($ttl > 0) {
             $ttl--;
+            sleep($this->requests_pause);
 
             $result = $this->get_request_archive($request_id);
             if ($result["status"] != "Pending") {
                 return $result;
             }
-
-            sleep($requests_pause);
         }
 
         throw new Exception("Timeout exceeded");
