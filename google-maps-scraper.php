@@ -10,7 +10,7 @@
  * @link       https://github.com/outscraper/google-maps-scraper-php
  */
 class ApiClient {
-    public $version = "1.1.0";
+    public $version = "1.1.1";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 12;
@@ -32,6 +32,53 @@ class ApiClient {
         $this->requests_pause = $requests_pause;
     }
 
+    private function wait_request_archive(string $request_id) : array {
+        $ttl = $this->max_ttl / $this->requests_pause;
+
+        while ($ttl > 0) {
+            $ttl--;
+            sleep($this->requests_pause);
+
+            $result = $this->get_request_archive($request_id);
+            if ($result["status"] != "Pending") {
+                return $result;
+            }
+        }
+
+        throw new Exception("Timeout exceeded");
+    }
+
+    private function make_get_request(string $url) : array {
+        $url = preg_replace('/%5B[0-9]+%5D/simU', '', $url);
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "{$this->api_url}/{$url}");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->api_headers);
+
+        $result = json_decode(curl_exec($ch), true);
+        if (curl_errno($ch)) {
+            throw new Exception("API Error: " . curl_error($ch));
+        }
+        curl_close($ch);
+
+        if (array_key_exists("error", $result) && $result["error"] == TRUE) {
+            throw new Exception($result["errorMessage"]);
+        }
+
+        return $result;
+    }
+
+    private function to_array(string|array $value) : array {
+        if (is_array($value)) {
+            return $value;
+        } else {
+            return [$value];
+        }
+    }
+
     /**
      * Fetch up to 100 of your last requests.
      *
@@ -51,7 +98,6 @@ class ApiClient {
     public function get_request_archive(string $request_id) : array {
         if($request_id == NULL)
             throw new Exception("request_id must have a value");
-
         return $this->make_get_request("requests/{$request_id}");
     }
 
@@ -116,58 +162,24 @@ class ApiClient {
             "cutoffRating" => $cutoff_rating,
             "sort" => $sort
         ));
-
         $result = $this->make_get_request("maps/reviews-v2?{$params}");
         return $this->wait_request_archive($result["id"]);
     }
 
-    private function wait_request_archive(string $request_id) : array {
-        $ttl = $this->max_ttl / $this->requests_pause;
-
-        while ($ttl > 0) {
-            $ttl--;
-            sleep($this->requests_pause);
-
-            $result = $this->get_request_archive($request_id);
-            if ($result["status"] != "Pending") {
-                return $result;
-            }
-        }
-
-        throw new Exception("Timeout exceeded");
-    }
-
-    private function make_get_request(string $url) : array {
-        $url = preg_replace('/%5B[0-9]+%5D/simU', '', $url);
-
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, "{$this->api_url}/{$url}");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->api_headers);
-
-        $result = json_decode(curl_exec($ch), true);
-        if (curl_errno($ch)) {
-            throw new Exception("API Error: " . curl_error($ch));
-        }
-        curl_close($ch);
-
-        if (array_key_exists("error", $result) && $result["error"] == TRUE) {
-            throw new Exception($result["errorMessage"]);
-        }
-
-        return $result;
-    }
-
-    private function to_array(string|array $value) : array {
-        if (is_array($value)) {
-            return $value;
-        } else {
-            return [$value];
-        }
+    /**
+     * Return email addresses, social links and phones from domains in seconds.
+     *
+     * @param string|array $query Domains or links (e.g., outscraper.com).
+     *
+     * @return array json result
+     */
+    public function emails_and_contacts(string|array $query) : array {
+        $params = http_build_query(array(
+            "query" => $this->to_array($query),
+        ));
+        $result = $this->make_get_request("emails-and-contacts?{$params}");
+        return $this->wait_request_archive($result["id"]);
     }
 }
-
 
 ?>

@@ -7,6 +7,7 @@ PHP SDK that allows using [Outscraper's services](https://outscraper.com/service
 - [Google Maps Reviews Scraper](https://outscraper.com/google-maps-reviews-scraper/)
 - [Google Maps Photos Scraper](https://outscraper.com/google-maps-photos-scraper/)
 - [Google Play Reviews Scraper](https://outscraper.com/google-maps-photos-scraper/)
+- [Emails & Contacts Scraper](https://outscraper.com/emails-scraper/)
 
 [API Docs](https://app.outscraper.com/api-docs)
 
@@ -41,6 +42,17 @@ $result = $client->google_maps_business_reviews([
     'https://www.google.com/maps/place/Statue+of+Liberty+National+Monument/@40.6892494,-74.0466891,17z/data=!3m1!4b1!4m5!3m4!1s0x89c25090129c363d:0x40c6a5770d25022b!8m2!3d40.6892494!4d-74.0445004'
 ], limit: 10, sort: 'newest');
 // you can use direct links, IDs, or names as input for query
+
+print_r($result);
+```
+
+Scrape Emails & Contacts from domains.
+```php
+require_once __DIR__ . '/vendor/autoload.php'; // change path as needed
+
+$result = $client->emails_and_contacts([
+    'outscraper.com'
+]);
 
 print_r($result);
 ```
