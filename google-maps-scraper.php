@@ -2,15 +2,15 @@
 
 
 /**
- * PHP SDK that allows scraping Google Maps and Google Reviews via Outscraper API.
+ * Outscraper ApiClient - PHP SDK that allows using Outscraper's services and Outscraper's API.
  *
  * @copyright  Outscraper 2021
  * @license    https://raw.githubusercontent.com/outscraper/google-maps-scraper-php/main/LICENSE
- * @version    Release: 0.0.1
+ * @version    Release: 1.1.0
  * @link       https://github.com/outscraper/google-maps-scraper-php
  */
 class ApiClient {
-    public $version = '1.1.0';
+    public $version = "1.1.0";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 12;
