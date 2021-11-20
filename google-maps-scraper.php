@@ -2,7 +2,7 @@
 
 
 /**
- * PHP SDK that allows scraping Google Maps and Google Reviews via OutScraper API.
+ * PHP SDK that allows scraping Google Maps and Google Reviews via Outscraper API.
  *
  * @copyright  Outscraper 2021
  * @license    https://raw.githubusercontent.com/outscraper/google-maps-scraper-php/main/LICENSE
