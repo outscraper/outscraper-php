@@ -1,8 +1,14 @@
-# Google Maps scraper in PHP
+# Outscraper SDK in PHP
 
-PHP SDK that allows scraping Google Maps and Google Reviews via [OutScraper API](https://outscraper.com).
+PHP SDK that allows using [Outscraper's services](https://outscraper.com/services/) and [Outscraper's API](https://app.outscraper.com/api-docs).
 
-[The API documentation](https://app.outscraper.com/api-docs).
+## List of Supported Services
+- [Google Maps Scraper](https://outscraper.com/google-maps-scraper/)
+- [Google Maps Reviews Scraper](https://outscraper.com/google-maps-reviews-scraper/)
+- [Google Maps Photos Scraper](https://outscraper.com/google-maps-photos-scraper/)
+- [Google Play Reviews Scraper](https://outscraper.com/google-maps-photos-scraper/)
+
+[API Docs](https://app.outscraper.com/api-docs)
 
 ## Installation
 
@@ -11,6 +17,8 @@ The Google Maps scraper PHP SDK can be installed with [Composer](https://getcomp
 ```sh
 composer require outscraper/google-maps-scraper-php 
 ```
+
+[Link to the php package page](https://packagist.org/packages/outscraper/google-maps-scraper-php)
 
 ## Usage
 
