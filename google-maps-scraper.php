@@ -251,6 +251,14 @@ class ApiClient {
         $result = $this->make_get_request("emails-and-contacts?{$params}");
         return $this->wait_request_archive($result["id"]);
     }
+
+    public function phones_enricher(string|array $query) : array {
+        $params = http_build_query(array(
+            "query" => $this->to_array($query),
+        ));
+        $result = $this->make_get_request("phones-enricher?{$params}");
+        return $this->wait_request_archive($result["id"]);
+    }
 }
 
 ?>
