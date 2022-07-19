@@ -27,6 +27,12 @@ require_once('/path/to/outscraper-php/init.php');
 ```
 [Link to the PHP package page](https://packagist.org/packages/outscraper/outscraper)
 
+## Initialization
+```php
+$client = new OutscraperClient("SECRET_API_KEY");
+```
+[Link to the profile page to create the API key](https://app.outscraper.com/profile)
+
 ## Usage
 
 ```php

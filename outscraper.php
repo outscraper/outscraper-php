@@ -2,15 +2,15 @@
 
 
 /**
- * Outscraper ApiClient - PHP SDK that allows using Outscraper's services and Outscraper's API.
+ * OutscraperClient - PHP SDK that allows using Outscraper's services and Outscraper's API.
  *
  * @copyright  Outscraper 2021
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
  * @version    Release: 1.1.0
  * @link       https://github.com/outscraper/outscraper-php
  */
-class ApiClient {
-    public $version = "1.5.1";
+class OutscraperClient {
+    public $version = "1.6.0";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;

@@ -29,12 +29,17 @@ require_once('/path/to/outscraper-php/init.php');
 ```
 [Link to the PHP package page](https://packagist.org/packages/outscraper/outscraper)
 
+## Initialization
+```php
+$client = new OutscraperClient("SECRET_API_KEY");
+```
+[Link to the profile page to create the API key](https://app.outscraper.com/profile)
+
 ## Google Maps Scraper
 
 Scrape Google Mpas results bu query "asian restaurants Berlin, Germany".
 
 ```php
-$client = new ApiClient("your API_KEY from https://app.outscraper.com/profile");
 $result = $client->google_maps_search(['asian restaurants Berlin, Germany'], 'en', 'DE');
 
 print_r($result);
