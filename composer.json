@@ -1,34 +1,35 @@
 {
-    "name": "outscraper/google-maps-scraper-php",
-    "description": "PHP SDK that allows scraping Google Maps and Google Reviews via Outscraper API.",
+    "name": "outscraper/outscraper",
+    "description": "PHP bindings for the Outscraper API",
     "require": {
         "php": ">=7.4"
     },
     "keywords": [
-        "Google",
-        "Outscrpaer",
-        "Google Maps",
-        "Google Reviews",
-        "Google Maps scraper",
-        "Google Reviews scraper",
+        "outscraper",
+        "google Maps",
+        "google maps scraper",
+        "google reviews scraper",
         "scrape google maps",
-        "Google Places"
+        "google",
+        "scraper",
+        "extractor",
+        "webscraper"
     ],
-    "homepage": "https://github.com/outscraper/google-maps-scraper-php",
+    "homepage": "https://outscraper.com/",
     "license": "MIT",
     "authors": [
         {
-            "name": "Vlad",
+            "name": "Outscraper",
             "role": "Developer",
-            "email": "vlad@outscraper.com"
+            "email": "support@outscraper.com"
         }
     ],
     "support": {
-        "issues": "https://github.com/outscraper/google-maps-scraper-php/issues"
+        "issues": "https://github.com/outscraper/outscraper-php/issues"
     },
     "autoload": {
         "files": [
-            "google-maps-scraper.php"
+            "outscraper.php"
         ]
     }
 }
