@@ -10,7 +10,7 @@
  * @link       https://github.com/outscraper/outscraper-php
  */
 class ApiClient {
-    public $version = "1.5.0";
+    public $version = "1.5.1";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -256,10 +256,11 @@ class ApiClient {
             "cutoff" => $cutoff,
             "cutoffRating" => $cutoff_rating,
             "reviewsQuery" => $reviews_query,
-            "sort" => $sort
+            "sort" => $sort,
+            "async" => FALSE,
         ));
         $result = $this->make_get_request("maps/reviews-v3?{$params}");
-        return $this->wait_request_archive($result["id"]);
+        return $result["data"];
     }
 
     /**
@@ -272,9 +273,10 @@ class ApiClient {
     public function emails_and_contacts(string|array $query) : array {
         $params = http_build_query(array(
             "query" => $this->to_array($query),
+            "async" => FALSE,
         ));
         $result = $this->make_get_request("emails-and-contacts?{$params}");
-        return $this->wait_request_archive($result["id"]);
+        return $result["data"];
     }
 
     /**
@@ -287,9 +289,10 @@ class ApiClient {
     public function phones_enricher(string|array $query) : array {
         $params = http_build_query(array(
             "query" => $this->to_array($query),
+            "async" => FALSE,
         ));
         $result = $this->make_get_request("phones-enricher?{$params}");
-        return $this->wait_request_archive($result["id"]);
+        return $result["data"];
     }
 }
 
