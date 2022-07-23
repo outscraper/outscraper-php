@@ -37,16 +37,38 @@ $client = new OutscraperClient("SECRET_API_KEY");
 
 ```php
 # Search for businesses in specific locations:
-result = client.google_maps_search_v2(['restaurants brooklyn usa'], limit=20, language='en', region='us')
+$results = $client->google_maps_search_v2(['restaurants brooklyn usa'], limit: 20, language: 'en', region: 'us');
 
 # Get data of the specific place by id
-result = client.google_maps_search_v2(['ChIJrc9T9fpYwokRdvjYRHT8nI4'], language='en')
+$results = $client.google_maps_search_v2(['ChIJrc9T9fpYwokRdvjYRHT8nI4'], language: 'en');
 
 # Scrap Places by Two Queries
-results = client.google_maps_search_v2(
+$results = $client->google_maps_search_v2(
     ['restaurants brooklyn usa', 'bars brooklyn usa'],
-    limit=50, # limit of palces per each query
-    language='en',
-    region='US',
-)
+    limit: 50, # limit of palces per each query
+    language: 'en',
+    region: 'US',
+);
+
+foreach ($results as &$query_places) {
+    foreach ($query_places as &$place) {
+        print($place['query']);
+        print($place['name']);
+        print($place['phone']);
+        print($place['site']);
+    }
+};
+
+# Scrap Places by Place Ids
+$results = $client->google_maps_search_v2(
+    ["ChIJ8ccnM7dbwokRy-pTMsdgvS4", "ChIJN5X_gWdZwokRck9rk2guJ1M", "ChIJxWLy8DlawokR1jvfXUPSTUE"],
+    limit: 1, # limit of palces per each query
+);
+
+foreach ($results as &$query_places) {
+    foreach ($query_places as &$place) {
+        print($place['query']);
+        print($place['place_id']);
+    }
+};
 ```

@@ -40,7 +40,7 @@ $client = new OutscraperClient("SECRET_API_KEY");
 Scrape Google Mpas results bu query "asian restaurants Berlin, Germany".
 
 ```php
-$result = $client->google_maps_search(['asian restaurants Berlin, Germany'], 'en', 'DE');
+$results = $client->google_maps_search(['asian restaurants Berlin, Germany'], 'en', 'DE');
 
 print_r($result);
 ```
@@ -49,7 +49,7 @@ print_r($result);
 
 Scrape Google Mpas reviews from Statue of Liberty National Monument.
 ```php
-$result = $client->google_maps_reviews([
+$results = $client->google_maps_reviews([
     'https://www.google.com/maps/place/Statue+of+Liberty+National+Monument/@40.6892494,-74.0466891,17z/data=!3m1!4b1!4m5!3m4!1s0x89c25090129c363d:0x40c6a5770d25022b!8m2!3d40.6892494!4d-74.0445004'
 ], limit: 10, sort: 'newest');
 // you can use direct links, IDs, or names as input for query
@@ -59,9 +59,14 @@ print_r($result);
 
 Scrape Emails & Contacts from domains.
 ```php
-$result = $client->emails_and_contacts([
+$results = $client->emails_and_contacts([
     'outscraper.com'
 ]);
 
 print_r($result);
 ```
+
+[More examples](https://github.com/outscraper/outscraper-php/tree/master/examples)
+
+## Contributing
+Bug reports and pull requests are welcome on GitHub at https://github.com/outscraper/outscraper-php.

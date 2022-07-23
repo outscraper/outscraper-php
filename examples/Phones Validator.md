@@ -37,5 +37,5 @@ $client = new OutscraperClient("SECRET_API_KEY");
 
 ```php
 # Search contacts from website:
-result = client.phones_enricher(['12812368208'])
+$results = $client->phones_enricher(['12812368208']);
 ```

@@ -10,7 +10,7 @@
  * @link       https://github.com/outscraper/outscraper-php
  */
 class OutscraperClient {
-    public $version = "1.6.1";
+    public $version = "1.6.2";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;

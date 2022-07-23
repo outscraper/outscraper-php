@@ -37,20 +37,41 @@ $client = new OutscraperClient("SECRET_API_KEY");
 
 ```php
 # Get reviews of the specific place by id
-result = client.google_maps_reviews_v3(['ChIJrc9T9fpYwokRdvjYRHT8nI4'], reviews_limit=20, language='en')
+$results = $client->google_maps_reviews_v3(['ChIJrc9T9fpYwokRdvjYRHT8nI4'], reviews_limit: 20, language: 'en');
 
 # Get reviews for places found by search query
-result = client.google_maps_reviews_v3(['Memphis Seoul brooklyn usa'], reviews_limit=20, limit=500, language='en')
+$results = $client->google_maps_reviews_v3(['Memphis Seoul brooklyn usa'], reviews_limit: 20, limit: 500, language: 'en');
 
 # Get only new reviews during last 24 hours
-yesterday_timestamp = 1657980986
-result = client.google_maps_reviews_v3(
-    ['ChIJrc9T9fpYwokRdvjYRHT8nI4'], sort='newest', cutoff=yesterday_timestamp, reviews_limit=100, language='en')
+$yesterday_timestamp = 1657980986;
+$results = $client->google_maps_reviews_v3(
+    ['ChIJrc9T9fpYwokRdvjYRHT8nI4'], sort: 'newest', cutoff: $yesterday_timestamp, reviews_limit: 100, language: 'en');
 
 # Scrap Places Reviews by Place Ids
-results = client.google_maps_reviews_v3(
+$results = $client->google_maps_reviews_v3(
     ["ChIJN5X_gWdZwokRck9rk2guJ1M", "ChIJxWLy8DlawokR1jvfXUPSTUE"],
-    reviews_limit=20, # limit of reviews per each place
-    limit=1, # limit of palces per each query
-)
+    reviews_limit: 20, # limit of reviews per each place
+    limit: 1, # limit of palces per each query
+);
+
+foreach ($results as &$place) {
+    print($place['name']);
+    foreach ($place['reviews_data'] as &$review) {
+        print($review['review_text']);
+    }
+};
+
+# Scrap Only New Reviews
+$results = $client->google_maps_reviews_v3(
+    ["ChIJN5X_gWdZwokRck9rk2guJ1M", "ChIJxWLy8DlawokR1jvfXUPSTUE"],
+    reviews_limit: 1000,
+    limit: 1,
+    sort: 'newest',
+    cutoff: 1654596109, # the maximum timestamp value for reviews (oldest review you want to extract). Can be used to scrape only the new reviews since your latest update
+);
+
+foreach ($results as &$place) {
+    print($place['name']);
+    print_r($place['reviews_data']);
+};
 ```
