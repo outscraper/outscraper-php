@@ -42,7 +42,7 @@ Scrape Google Mpas results bu query "asian restaurants Berlin, Germany".
 ```php
 $results = $client->google_maps_search(['asian restaurants Berlin, Germany'], 'en', 'DE');
 
-print_r($result);
+print_r($results);
 ```
 
 ## Google Maps Reviews Scraper
@@ -54,7 +54,7 @@ $results = $client->google_maps_reviews([
 ], limit: 10, sort: 'newest');
 // you can use direct links, IDs, or names as input for query
 
-print_r($result);
+print_r($results);
 ```
 
 Scrape Emails & Contacts from domains.
@@ -63,7 +63,7 @@ $results = $client->emails_and_contacts([
     'outscraper.com'
 ]);
 
-print_r($result);
+print_r($results);
 ```
 
 [More examples](https://github.com/outscraper/outscraper-php/tree/master/examples)
