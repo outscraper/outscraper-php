@@ -40,7 +40,7 @@ $client = new OutscraperClient("SECRET_API_KEY");
 Scrape Google Mpas results bu query "asian restaurants Berlin, Germany".
 
 ```php
-$results = $client->google_maps_search(['asian restaurants Berlin, Germany'], 'en', 'DE');
+$results = $client->google_maps_search_v2(['asian restaurants Berlin, Germany'], 'en', 'DE');
 
 print_r($results);
 ```
