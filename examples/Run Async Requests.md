@@ -36,6 +36,8 @@ $client = new OutscraperClient("SECRET_API_KEY");
 ## Usage
 
 ```php
+$results = array();
+$running_request_ids = array();
 $place_ids = array(
     'ChIJNw4_-cWXyFYRF_4GTtujVsw',
     'ChIJ39fGAcGXyFYRNdHIXy-W5BA',
@@ -51,6 +53,26 @@ $place_ids = array(
 
 foreach ($place_ids as &$place_id) {
     $response = $client->google_maps_search([$place_id], language: 'en', region: 'us', async_request: TRUE);
-    print_r($response['id']);
+    array_push($running_request_ids, $response['id']);
 }
+
+$attempts = 5; # retry 5 times
+while ($attempts && !empty($running_request_ids)) { # stop when no more attempts are left or when no more running request ids
+    $attempts = $attempts - 1;
+    sleep(60);
+
+    foreach ($running_request_ids as &$request_id) {
+        $result = $client->get_request_archive($request_id);
+
+        if ($result['status'] != 'Success') {
+            array_push($results, $result['data']);
+
+            if (($key = array_search($del_val, $running_request_ids)) !== false) {
+                unset($running_request_ids[$key]);
+            }
+        }
+    }
+}
+
+print_r($results);
 ```
