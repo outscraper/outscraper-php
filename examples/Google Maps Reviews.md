@@ -1,6 +1,12 @@
 # Google Maps Reviews Scraper With PHP
 
 The library provides real-time access to the reviews from Google Maps via [Outscraper API](https://app.outscraper.com/api-docs#tag/Google-Reviews).
+It allows scraping all the reviews from any place on Google Maps within seconds.
+
+- Not limited to the official Google API limit of 5 reviews per a place
+- Real time data scraping with response time less than 3s
+- Sort, skip, ignore, cutoff, and other advanced parameters
+
 
 ## Installation
 
