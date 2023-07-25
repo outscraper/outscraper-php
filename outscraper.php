@@ -203,7 +203,7 @@ class OutscraperClient {
      * @param int $reviews_limit Parameter specifies the limit of reviews to extract from one organization.
      * @param string $coordinates Parameter defines the coordinates to use along with the query. Example: "@41.3954381,2.1628662,15.1z".
      * @param int $cutoff Parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to newest.
-     * @param int $cutoffRating Parameter specifies the maximum (for lowest_rating sorting) or minimum (for highest_rating sorting) rating for reviews. Using the cutoffRating requires sorting to be set to "lowest_rating" or "highest_rating".
+     * @param int $cutoff_rating Parameter specifies the maximum (for lowest_rating sorting) or minimum (for highest_rating sorting) rating for reviews. Using the cutoffRating requires sorting to be set to "lowest_rating" or "highest_rating".
      * @param string $sort Parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
      * @param string $reviews_query Parameter specifies the query to search among the reviews (e.g. wow, amazing, horrible place).
      * @param bool $async_request Parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
@@ -246,7 +246,7 @@ class OutscraperClient {
      * @param int $reviews_limit Parameter specifies the limit of reviews to extract from one organization.
      * @param string $coordinates Parameter defines the coordinates to use along with the query. Example: "@41.3954381,2.1628662,15.1z".
      * @param int $cutoff Parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to newest.
-     * @param int $cutoffRating Parameter specifies the maximum (for lowest_rating sorting) or minimum (for highest_rating sorting) rating for reviews. Using the cutoffRating requires sorting to be set to "lowest_rating" or "highest_rating".
+     * @param int $cutoff_rating Parameter specifies the maximum (for lowest_rating sorting) or minimum (for highest_rating sorting) rating for reviews. Using the cutoffRating requires sorting to be set to "lowest_rating" or "highest_rating".
      * @param string $sort Parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
      * @param string $reviews_query Parameter specifies the query to search among the reviews (e.g. wow, amazing, horrible place).
      *
