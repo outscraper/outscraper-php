@@ -10,7 +10,7 @@
  * @link       https://github.com/outscraper/outscraper-php
  */
 class OutscraperClient {
-    public $version = "3.1.0";
+    public $version = "3.2.0";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -210,6 +210,8 @@ class OutscraperClient {
      * @param int $cutoff_rating Parameter specifies the maximum (for lowest_rating sorting) or minimum (for highest_rating sorting) rating for reviews. Using the cutoffRating requires sorting to be set to "lowest_rating" or "highest_rating".
      * @param string $sort Parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
      * @param string $reviews_query Parameter specifies the query to search among the reviews (e.g. wow, amazing, horrible place).
+     * @param bool $ignore_empty Parameter specifies whether to ignore reviews without text or not.
+     * @param string $last_pagination_id Parameter specifies the review_pagination_id of the last item. It's commonly used in pagination.
      * @param bool $async_request Parameter defines the way you want to submit your task to Outscraper. It can be set to `False` (default) to send a task and wait until you got your results, or `True` to submit your task and retrieve the results later using a request ID with `get_request_archive`. Each response is available for `2` hours after a request has been completed.
      * @param bool $webhook Parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
      *
@@ -218,7 +220,8 @@ class OutscraperClient {
     public function google_maps_reviews(
         string|array $query, string $language = "en", string $region = NULL, int $limit = 1,
         int $reviews_limit = 100, string $coordinates = NULL, int $cutoff = NULL, int $cutoff_rating = NULL,
-        string $sort = "most_relevant", string $reviews_query = NULL, bool $async_request = FALSE, string $webhook = NULL
+        string $sort = "most_relevant", string $reviews_query = NULL, bool $ignore_empty = FALSE,
+        string $last_pagination_id = NULL, bool $async_request = FALSE, string $webhook = NULL
     ) : array|string {
         $params = http_build_query(array(
             "query" => $this->to_array($query),
@@ -229,8 +232,10 @@ class OutscraperClient {
             "coordinates" => $coordinates,
             "cutoff" => $cutoff,
             "cutoffRating" => $cutoff_rating,
-            "reviewsQuery" => $reviews_query,
             "sort" => $sort,
+            "reviewsQuery" => $reviews_query,
+            "ignoreEmpty" => $ignore_empty,
+            "lastPaginationId" => $last_pagination_id,
             "async" => $async_request,
             "webhook" => $webhook,
         ));
@@ -255,13 +260,14 @@ class OutscraperClient {
      * @param int $cutoff_rating Parameter specifies the maximum (for lowest_rating sorting) or minimum (for highest_rating sorting) rating for reviews. Using the cutoffRating requires sorting to be set to "lowest_rating" or "highest_rating".
      * @param string $sort Parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
      * @param string $reviews_query Parameter specifies the query to search among the reviews (e.g. wow, amazing, horrible place).
+     * @param bool $ignore_empty Parameter specifies whether to ignore reviews without text or not.
      *
      * @return array request/task result
      */
     public function google_maps_reviews_v2(
         string|array $query, string $language = "en", string $region = NULL, int $limit = 1,
         int $reviews_limit = 100, string $coordinates = NULL, int $cutoff = NULL, int $cutoff_rating = NULL,
-        string $sort = "most_relevant", string $reviews_query = NULL
+        string $sort = "most_relevant", string $reviews_query = NULL, bool $ignore_empty = FALSE
     ) : array {
         $params = http_build_query(array(
             "query" => $this->to_array($query),
@@ -273,6 +279,7 @@ class OutscraperClient {
             "cutoff" => $cutoff,
             "cutoffRating" => $cutoff_rating,
             "reviewsQuery" => $reviews_query,
+            "ignoreEmpty" => $ignore_empty,
             "sort" => $sort
         ));
         $result = $this->make_get_request("maps/reviews-v2?{$params}");
