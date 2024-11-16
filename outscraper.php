@@ -6,11 +6,11 @@
  *
  * @copyright  Outscraper 2024
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
- * @version    Release: 3.3.0
+ * @version    Release: 4.0.0
  * @link       https://github.com/outscraper/outscraper-php
  */
 class OutscraperClient {
-    public $version = "3.3.0";
+    public $version = "4.0.0";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -71,14 +71,6 @@ class OutscraperClient {
         return $result;
     }
 
-    private function to_array(string|array $value) : array {
-        if (is_array($value)) {
-            return $value;
-        } else {
-            return [$value];
-        }
-    }
-
     /**
      * Fetch up to 100 of your last requests.
      *
@@ -104,7 +96,7 @@ class OutscraperClient {
     /**
      * Returns search results from Google based on a given search query (or many queries).
      *
-     * @param string|array $query Parameter defines the queries to search on Google (e.g., bitcoin, 37th president of usa). Using an array allows multiple queries to be sent in one request and save on network latency time.
+     * @param array $query Parameter defines the queries to search on Google (e.g., bitcoin, 37th president of usa). Using an array allows multiple queries to be sent in one request and save on network latency time.
      * @param int $pages_per_query Parameter specifies the limit of pages to return from one query.
      * @param string $uule Google UULE parameter is used to encode a place or an exact location (with latitude and longitude) into a code. By using it you can see a Google result page like someone located at the specified location.
      * @param string $language Parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
@@ -114,10 +106,10 @@ class OutscraperClient {
      * @return array request/task result
      */
     public function google_search(
-        string|array $query, int $pages_per_query = 1, string $uule = "", string $language = "en", string $region = NULL, string $webhook = NULL
+        array $query, int $pages_per_query = 1, string $uule = "", string $language = "en", string $region = NULL, string $webhook = NULL
     ) : array {
         $params = http_build_query(array(
-            "query" => $this->to_array($query),
+            "query" => $query,
             "pagesPerQuery" => $pages_per_query,
             "uule" => $uule,
             "language" => $language,
@@ -131,7 +123,7 @@ class OutscraperClient {
     /**
      * Get data from Google Maps (speed optimized endpoint)
      *
-     * @param string|array $query Parameter defines the query or queries you want to search on Google Maps. Using an array allows multiple queries to be sent in one request and save on network latency time.
+     * @param array $query Parameter defines queries you want to search on Google Maps. Using an array allows multiple queries to be sent in one request and save on network latency time.
      * @param string $language Parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
      * @param string $region Parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
      * @param int $limit Parameter specifies the limit of organizations to take from one query search. Usually, there are no more than 400 organizations per one query search on Google Maps. Use more precise categories (asian restaurant, italian restaurant, etc.) to overcome this limitation.
@@ -145,11 +137,11 @@ class OutscraperClient {
      * @return array request/task result
      */
     public function google_maps_search(
-        string|array $query, string $language = "en", string $region = NULL, int $limit = 400,
+        array $query, string $language = "en", string $region = NULL, int $limit = 400,
         string $coordinates = NULL, bool $drop_duplicates = FALSE, int $skip = 0, bool $async_request = FALSE, string $webhook = NULL
-    ) : array|string {
+    ) : array {
         $params = http_build_query(array(
-            "query" => $this->to_array($query),
+            "query" => $query,
             "language" => $language,
             "region" => $region,
             "organizationsPerQueryLimit" => $limit,
@@ -170,7 +162,7 @@ class OutscraperClient {
     /**
      * Get data from Google Maps
      *
-     * @param string|array $query Parameter defines the query or queries you want to search on Google Maps. Using an array allows multiple queries to be sent in one request and save on network latency time.
+     * @param array $query Parameter defines queries you want to search on Google Maps. Using an array allows multiple queries to be sent in one request and save on network latency time.
      * @param string $language Parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
      * @param string $region Parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
      * @param int $limit Parameter specifies the limit of organizations to take from one query search. Usually, there are no more than 400 organizations per one query search on Google Maps. Use more precise categories (asian restaurant, italian restaurant, etc.) to overcome this limitation.
@@ -181,11 +173,11 @@ class OutscraperClient {
      * @return array request/task result
      */
     public function google_maps_search_v1(
-        string|array $query, string $language = "en", string $region = NULL, int $limit = 400,
+        array $query, string $language = "en", string $region = NULL, int $limit = 400,
         bool $extract_contacts = FALSE, string $coordinates = NULL, bool $drop_duplicates = FALSE
     ) : array {
         $params = http_build_query(array(
-            "query" => $this->to_array($query),
+            "query" => $query,
             "language" => $language,
             "region" => $region,
             "organizationsPerQueryLimit" => $limit,
@@ -200,7 +192,7 @@ class OutscraperClient {
     /**
      * Get reviews from Google Maps (speed optimized)
      *
-     * @param string|array $query Parameter defines the query or queries you want to search on Google Maps. Using an array allows multiple queries to be sent in one request and save on network latency time.
+     * @param array $query Parameter defines queries you want to search on Google Maps. Using an array allows multiple queries to be sent in one request and save on network latency time.
      * @param string $language Parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
      * @param string $region Parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
      * @param int $limit Parameter specifies the limit of organizations to take from one query search. Usually, there are no more than 400 organizations per one query search on Google Maps. Use more precise categories (asian restaurant, italian restaurant, etc.) to overcome this limitation.
@@ -219,13 +211,13 @@ class OutscraperClient {
      * @return array request/task result
      */
     public function google_maps_reviews(
-        string|array $query, string $language = "en", string $region = NULL, int $limit = 1,
+        array $query, string $language = "en", string $region = NULL, int $limit = 1,
         int $reviews_limit = 100, string $coordinates = NULL, int $start = NULL, int $cutoff = NULL, int $cutoff_rating = NULL,
         string $sort = "most_relevant", string $reviews_query = NULL, bool $ignore_empty = FALSE,
         string $last_pagination_id = NULL, bool $async_request = FALSE, string $webhook = NULL
-    ) : array|string {
+    ) : array {
         $params = http_build_query(array(
-            "query" => $this->to_array($query),
+            "query" => $query,
             "language" => $language,
             "region" => $region,
             "organizationsPerQueryLimit" => $limit,
@@ -252,7 +244,7 @@ class OutscraperClient {
     /**
      * Get reviews from Google Maps
      *
-     * @param string|array $query Parameter defines the query or queries you want to search on Google Maps. Using an array allows multiple queries to be sent in one request and save on network latency time.
+     * @param array $query Parameter defines queries you want to search on Google Maps. Using an array allows multiple queries to be sent in one request and save on network latency time.
      * @param string $language Parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
      * @param string $region Parameter specifies the region to use for Google. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
      * @param int $limit Parameter specifies the limit of organizations to take from one query search. Usually, there are no more than 400 organizations per one query search on Google Maps. Use more precise categories (asian restaurant, italian restaurant, etc.) to overcome this limitation.
@@ -267,12 +259,12 @@ class OutscraperClient {
      * @return array request/task result
      */
     public function google_maps_reviews_v2(
-        string|array $query, string $language = "en", string $region = NULL, int $limit = 1,
+        array $query, string $language = "en", string $region = NULL, int $limit = 1,
         int $reviews_limit = 100, string $coordinates = NULL, int $cutoff = NULL, int $cutoff_rating = NULL,
         string $sort = "most_relevant", string $reviews_query = NULL, bool $ignore_empty = FALSE
     ) : array {
         $params = http_build_query(array(
-            "query" => $this->to_array($query),
+            "query" => $query,
             "language" => $language,
             "region" => $region,
             "organizationsPerQueryLimit" => $limit,
@@ -291,13 +283,13 @@ class OutscraperClient {
     /**
      * Return email addresses, social links and phones from domains in seconds.
      *
-     * @param string|array $query Domains or links (e.g., outscraper.com).
+     * @param array $query Domains or links (e.g., outscraper.com).
      *
      * @return array json result
      */
-    public function emails_and_contacts(string|array $query) : array {
+    public function emails_and_contacts(array $query) : array {
         $params = http_build_query(array(
-            "query" => $this->to_array($query),
+            "query" => $query,
             "async" => FALSE,
         ));
         $result = $this->make_get_request("emails-and-contacts?{$params}");
@@ -307,13 +299,13 @@ class OutscraperClient {
     /**
      * Returns phones carrier data (name/type), validates phones, ensures messages deliverability.
      *
-     * @param string|array $query Phone number (e.g., +1 281 236 8208).
+     * @param array $query Phone numbers (e.g., +1 281 236 8208).
      *
      * @return array json result
      */
-    public function phones_enricher(string|array $query) : array {
+    public function phones_enricher(array $query) : array {
         $params = http_build_query(array(
-            "query" => $this->to_array($query),
+            "query" => $query,
             "async" => FALSE,
         ));
         $result = $this->make_get_request("phones-enricher?{$params}");
