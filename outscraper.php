@@ -4,9 +4,9 @@
 /**
  * OutscraperClient - PHP SDK that allows using Outscraper's services and Outscraper's API.
  *
- * @copyright  Outscraper 2021
+ * @copyright  Outscraper 2024
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
- * @version    Release: 3.1.0
+ * @version    Release: 3.3.0
  * @link       https://github.com/outscraper/outscraper-php
  */
 class OutscraperClient {
