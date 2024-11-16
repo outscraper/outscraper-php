@@ -10,7 +10,7 @@
  * @link       https://github.com/outscraper/outscraper-php
  */
 class OutscraperClient {
-    public $version = "3.2.0";
+    public $version = "3.3.0";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -206,7 +206,8 @@ class OutscraperClient {
      * @param int $limit Parameter specifies the limit of organizations to take from one query search. Usually, there are no more than 400 organizations per one query search on Google Maps. Use more precise categories (asian restaurant, italian restaurant, etc.) to overcome this limitation.
      * @param int $reviews_limit Parameter specifies the limit of reviews to extract from one organization.
      * @param string $coordinates Parameter defines the coordinates to use along with the query. Example: "@41.3954381,2.1628662,15.1z".
-     * @param int $cutoff Parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to newest.
+     * @param int $start Parameter specifies the start timestamp value for reviews (newest review). The current timestamp is used when the value is not provided. Using the start parameter overwrites the sort parameter to newest. Therefore, the latest reviews will be at the beginning.
+     * @param int $cutoff Parameter specifies the maximum timestamp value for reviews. Using the cutoff parameter overwrites sort parameter to newest. Using the cutoff parameter overwrites sort parameter to newest. Therefore, the latest reviews will be at the beginning.
      * @param int $cutoff_rating Parameter specifies the maximum (for lowest_rating sorting) or minimum (for highest_rating sorting) rating for reviews. Using the cutoffRating requires sorting to be set to "lowest_rating" or "highest_rating".
      * @param string $sort Parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
      * @param string $reviews_query Parameter specifies the query to search among the reviews (e.g. wow, amazing, horrible place).
@@ -219,7 +220,7 @@ class OutscraperClient {
      */
     public function google_maps_reviews(
         string|array $query, string $language = "en", string $region = NULL, int $limit = 1,
-        int $reviews_limit = 100, string $coordinates = NULL, int $cutoff = NULL, int $cutoff_rating = NULL,
+        int $reviews_limit = 100, string $coordinates = NULL, int $start = NULL, int $cutoff = NULL, int $cutoff_rating = NULL,
         string $sort = "most_relevant", string $reviews_query = NULL, bool $ignore_empty = FALSE,
         string $last_pagination_id = NULL, bool $async_request = FALSE, string $webhook = NULL
     ) : array|string {
@@ -230,6 +231,7 @@ class OutscraperClient {
             "organizationsPerQueryLimit" => $limit,
             "reviewsPerOrganizationLimit" => $reviews_limit,
             "coordinates" => $coordinates,
+            "start" => $start,
             "cutoff" => $cutoff,
             "cutoffRating" => $cutoff_rating,
             "sort" => $sort,
