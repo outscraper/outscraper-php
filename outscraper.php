@@ -6,11 +6,11 @@
  *
  * @copyright  Outscraper 2024
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
- * @version    Release: 4.0.0
+ * @version    Release: 4.1.0
  * @link       https://github.com/outscraper/outscraper-php
  */
 class OutscraperClient {
-    public $version = "4.0.0";
+    public $version = "4.1.0";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -190,7 +190,7 @@ class OutscraperClient {
     }
 
     /**
-     * Get reviews from Google Maps (speed optimized)
+     * Get reviews from Google Maps (speed optimized endpoint for real time data)
      *
      * @param array $query Parameter defines queries you want to search on Google Maps. Using an array allows multiple queries to be sent in one request and save on network latency time.
      * @param string $language Parameter specifies the language to use for Google. Available values: "en", "de", "es", "es-419", "fr", "hr", "it", "nl", "pl", "pt-BR", "pt-PT", "vi", "tr", "ru", "ar", "th", "ko", "zh-CN", "zh-TW", "ja", "ach", "af", "ak", "ig", "az", "ban", "ceb", "xx-bork", "bs", "br", "ca", "cs", "sn", "co", "cy", "da", "yo", "et", "xx-elmer", "eo", "eu", "ee", "tl", "fil", "fo", "fy", "gaa", "ga", "gd", "gl", "gn", "xx-hacker", "ht", "ha", "haw", "bem", "rn", "id", "ia", "xh", "zu", "is", "jw", "rw", "sw", "tlh", "kg", "mfe", "kri", "la", "lv", "to", "lt", "ln", "loz", "lua", "lg", "hu", "mg", "mt", "mi", "ms", "pcm", "no", "nso", "ny", "nn", "uz", "oc", "om", "xx-pirate", "ro", "rm", "qu", "nyn", "crs", "sq", "sk", "sl", "so", "st", "sr-ME", "sr-Latn", "su", "fi", "sv", "tn", "tum", "tk", "tw", "wo", "el", "be", "bg", "ky", "kk", "mk", "mn", "sr", "tt", "tg", "uk", "ka", "hy", "yi", "iw", "ug", "ur", "ps", "sd", "fa", "ckb", "ti", "am", "ne", "mr", "hi", "bn", "pa", "gu", "or", "ta", "te", "kn", "ml", "si", "lo", "my", "km", "chr".
@@ -310,6 +310,59 @@ class OutscraperClient {
         ));
         $result = $this->make_get_request("phones-enricher?{$params}");
         return $result["data"];
+    }
+
+    /**
+     * Returns data from Trustpilot businesses.
+     *
+     * @param array $query Links to Trustpilot pages or domain names (e.g., outscraper.com, https://www.trustpilot.com/review/outscraper.com). Using an array allows multiple queries to be sent in one request and save on network latency time.
+     *
+     * @return array request/task result
+     */
+    public function trustpilot(array $query) : array {
+        $params = http_build_query(array(
+            "query" => $query,
+        ));
+        $result = $this->make_get_request("trustpilot?{$params}");
+        return $this->wait_request_archive($result["id"]);
+    }
+
+    /**
+     * Returns search resutls from Trustpilot.
+     *
+     * @param array $query Company or category to search on Trustpilot (e.g., real estate). Using an array allows multiple queries to be sent in one request and save on network latency time.
+     * @param int $limit Parameter specifies the limit of items to get from one query.
+     *
+     * @return array request/task result
+     */
+    public function trustpilot_search(array $query, int $limit = 100) : array {
+        $params = http_build_query(array(
+            "query" => $query,
+            "limit" => $limit,
+        ));
+        $result = $this->make_get_request("trustpilot/search?{$params}");
+        return $this->wait_request_archive($result["id"]);
+    }
+
+    /**
+     * Returns reviews from Trustpilot businesses.
+     *
+     * @param array $query Links to Trustpilot pages or domain names (e.g., outscraper.com, https://www.trustpilot.com/review/outscraper.com). Using an array allows multiple queries to be sent in one request and save on network latency time.
+     * @param int $limit Parameter specifies the limit of items to get from one query.
+     * @param string $sort Parameter specifies one of the sorting types (e.g., recency).
+     * @param int $cutoff Parameter specifies the oldest timestamp value for items. Using the cutoff parameter overwrites sort parameter`. Therefore, the latest records will be at the beginning (newest first).
+     *
+     * @return array request/task result
+     */
+    public function trustpilot_reviews(array $query, int $limit = 100, string $sort = NULL, int $cutoff = NULL) : array {
+        $params = http_build_query(array(
+            "query" => $query,
+            "limit" => $limit,
+            "sort" => $sort,
+            "cutoff" => $cutoff,
+        ));
+        $result = $this->make_get_request("trustpilot/reviews?{$params}");
+        return $this->wait_request_archive($result["id"]);
     }
 }
 
