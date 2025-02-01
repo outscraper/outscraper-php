@@ -6,11 +6,11 @@
  *
  * @copyright  Outscraper 2024
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
- * @version    Release: 4.1.0
+ * @version    Release: 4.2.0
  * @link       https://github.com/outscraper/outscraper-php
  */
 class OutscraperClient {
-    public $version = "4.1.0";
+    public $version = "4.2.0";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -213,7 +213,7 @@ class OutscraperClient {
     public function google_maps_reviews(
         array $query, string $language = "en", string $region = NULL, int $limit = 1,
         int $reviews_limit = 100, string $coordinates = NULL, int $start = NULL, int $cutoff = NULL, int $cutoff_rating = NULL,
-        string $sort = "most_relevant", string $reviews_query = NULL, bool $ignore_empty = FALSE,
+        string $sort = "most_relevant", string $reviews_query = NULL, bool $ignore_empty = FALSE, string $source = NULL,
         string $last_pagination_id = NULL, bool $async_request = FALSE, string $webhook = NULL
     ) : array {
         $params = http_build_query(array(
@@ -229,6 +229,7 @@ class OutscraperClient {
             "sort" => $sort,
             "reviewsQuery" => $reviews_query,
             "ignoreEmpty" => $ignore_empty,
+            "source" => $source,
             "lastPaginationId" => $last_pagination_id,
             "async" => $async_request,
             "webhook" => $webhook,
@@ -255,6 +256,7 @@ class OutscraperClient {
      * @param string $sort Parameter specifies one of the sorting types. Available values: "most_relevant", "newest", "highest_rating", "lowest_rating".
      * @param string $reviews_query Parameter specifies the query to search among the reviews (e.g. wow, amazing, horrible place).
      * @param bool $ignore_empty Parameter specifies whether to ignore reviews without text or not.
+     * @param bool $source (str): parameter specifies source filter. This commonly used for hotels where you can find reviews from other sources like Booking.com, Expedia, etc.
      *
      * @return array request/task result
      */
