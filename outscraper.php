@@ -4,13 +4,13 @@
 /**
  * OutscraperClient - PHP SDK that allows using Outscraper's services and Outscraper's API.
  *
- * @copyright  Outscraper 2024
+ * @copyright  Outscraper 2025
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
- * @version    Release: 4.2.0
+ * @version    Release: 4.2.1
  * @link       https://github.com/outscraper/outscraper-php
  */
 class OutscraperClient {
-    public $version = "4.2.0";
+    public $version = "4.2.1";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -19,7 +19,7 @@ class OutscraperClient {
     /**
      * @param string $api_key API KEY from https://app.outscraper.com/profile
      */
-    public function __construct(string $api_key = NULL, int $requests_pause = 5) {
+    public function __construct(?string $api_key = NULL, int $requests_pause = 5) {
         if($api_key == NULL)
             throw new Exception("api_key must have a value");
 
@@ -106,7 +106,7 @@ class OutscraperClient {
      * @return array request/task result
      */
     public function google_search(
-        array $query, int $pages_per_query = 1, string $uule = "", string $language = "en", string $region = NULL, string $webhook = NULL
+        array $query, int $pages_per_query = 1, string $uule = "", string $language = "en", ?string $region = NULL, ?string $webhook = NULL
     ) : array {
         $params = http_build_query(array(
             "query" => $query,
@@ -135,7 +135,7 @@ class OutscraperClient {
      */
     public function google_search_news(
         array $query, int $pages_per_query = 1, string $uule = "", string $tbs = "", string $language = "en",
-        string $region = NULL, bool $async_request = FALSE
+        ?string $region = NULL, bool $async_request = FALSE
     ) : array {
         $params = http_build_query(array(
             "query" => $query,
@@ -172,8 +172,8 @@ class OutscraperClient {
      * @return array request/task result
      */
     public function google_maps_search(
-        array $query, string $language = "en", string $region = NULL, int $limit = 400,
-        string $coordinates = NULL, bool $drop_duplicates = FALSE, int $skip = 0, bool $async_request = FALSE, string $webhook = NULL
+        array $query, string $language = "en", ?string $region = NULL, int $limit = 400,
+        ?string $coordinates = NULL, bool $drop_duplicates = FALSE, int $skip = 0, bool $async_request = FALSE, ?string $webhook = NULL
     ) : array {
         $params = http_build_query(array(
             "query" => $query,
@@ -208,8 +208,8 @@ class OutscraperClient {
      * @return array request/task result
      */
     public function google_maps_search_v1(
-        array $query, string $language = "en", string $region = NULL, int $limit = 400,
-        bool $extract_contacts = FALSE, string $coordinates = NULL, bool $drop_duplicates = FALSE
+        array $query, string $language = "en", ?string $region = NULL, int $limit = 400,
+        bool $extract_contacts = FALSE, ?string $coordinates = NULL, bool $drop_duplicates = FALSE
     ) : array {
         $params = http_build_query(array(
             "query" => $query,
@@ -239,7 +239,7 @@ class OutscraperClient {
      * @return array The search results or task ID if asynchronous request is enabled.
      */
     public function google_maps_search_v3(
-        array $query, int $limit = 20, string $language = "en", string $region = NULL, int $skip = 0,
+        array $query, int $limit = 20, string $language = "en", ?string $region = NULL, int $skip = 0,
         bool $drop_duplicates = FALSE, ?array $enrichment = NULL, bool $async_request = TRUE
     ) : array {
         $params = http_build_query(array(
@@ -280,13 +280,13 @@ class OutscraperClient {
     public function google_maps_directions(
         string|array $origin = '',
         string|array $destination = '',
-        string $departure_time = null,
-        string $finish_time = null,
-        string $interval = null,
+        ?string $departure_time = null,
+        ?string $finish_time = null,
+        ?string $interval = null,
         string $travel_mode = 'best',
         string $language = 'en',
-        string $region = null,
-        array $fields = null,
+        ?string $region = null,
+        ?array $fields = null,
         bool $async_request = true
     ): array {
         $params = http_build_query([
@@ -333,10 +333,10 @@ class OutscraperClient {
      * @return array request/task result
      */
     public function google_maps_reviews(
-        array $query, string $language = "en", string $region = NULL, int $limit = 1,
-        int $reviews_limit = 100, string $coordinates = NULL, int $start = NULL, int $cutoff = NULL, int $cutoff_rating = NULL,
-        string $sort = "most_relevant", string $reviews_query = NULL, bool $ignore_empty = FALSE, string $source = NULL,
-        string $last_pagination_id = NULL, bool $async_request = FALSE, string $webhook = NULL
+        array $query, string $language = "en", ?string $region = NULL, int $limit = 1,
+        int $reviews_limit = 100, ?string $coordinates = NULL, ?int $start = NULL, ?int $cutoff = NULL, ?int $cutoff_rating = NULL,
+        string $sort = "most_relevant", ?string $reviews_query = NULL, bool $ignore_empty = FALSE, ?string $source = NULL,
+        ?string $last_pagination_id = NULL, bool $async_request = FALSE, ?string $webhook = NULL
     ) : array {
         $params = http_build_query(array(
             "query" => $query,
@@ -383,9 +383,9 @@ class OutscraperClient {
      * @return array request/task result
      */
     public function google_maps_reviews_v2(
-        array $query, string $language = "en", string $region = NULL, int $limit = 1,
-        int $reviews_limit = 100, string $coordinates = NULL, int $cutoff = NULL, int $cutoff_rating = NULL,
-        string $sort = "most_relevant", string $reviews_query = NULL, bool $ignore_empty = FALSE
+        array $query, string $language = "en", ?string $region = NULL, int $limit = 1,
+        int $reviews_limit = 100, ?string $coordinates = NULL, ?int $cutoff = NULL, ?int $cutoff_rating = NULL,
+        string $sort = "most_relevant", ?string $reviews_query = NULL, bool $ignore_empty = FALSE
     ) : array {
         $params = http_build_query(array(
             "query" => $query,
@@ -836,7 +836,7 @@ class OutscraperClient {
      *
      * @return array request/task result
      */
-    public function trustpilot_reviews(array $query, int $limit = 100, string $sort = NULL, int $cutoff = NULL) : array {
+    public function trustpilot_reviews(array $query, int $limit = 100, ?string $sort = NULL, ?int $cutoff = NULL) : array {
         $params = http_build_query(array(
             "query" => $query,
             "limit" => $limit,
