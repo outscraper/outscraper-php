@@ -6,7 +6,7 @@
  *
  * @copyright  Outscraper 2025
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
- * @version    Release: 4.2.0
+ * @version    Release: 4.2.2
  * @link       https://github.com/outscraper/outscraper-php
  */
 class OutscraperClient {
