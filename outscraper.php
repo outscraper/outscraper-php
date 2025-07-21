@@ -6,7 +6,7 @@
  *
  * @copyright  Outscraper 2025
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
- * @version    Release: 4.2.1
+ * @version    Release: 4.2.2
  * @link       https://github.com/outscraper/outscraper-php
  */
 class OutscraperClient {
@@ -1084,6 +1084,52 @@ class OutscraperClient {
             "limit" => $limit,
         ));
         $result = $this->make_get_request("trustpilot/search?{$params}");
+        return $this->wait_request_archive($result["id"]);
+    }
+
+    /**
+     * Returns search resutls from Similarweb.
+     *
+     * @param string|array $query The query or queries to search for domain(website) information.
+     * @param string|array $fields Optional parameter to specify which fields to return. Default is empty string.
+     * @param bool $async_request Whether to run the request asynchronously. Default is false.
+     *
+     * @return array request/task result
+     */
+    public function similarweb(
+        string|array $query,
+        string|array $fields = '',
+        bool $async_request = false
+        ) : array {
+        $params = http_build_query(array(
+            "query" => $query,
+            'fields'=> $fields,
+            'async' => $async_request,
+        ));
+        $result = $this->make_get_request("similarweb?{$params}");
+        return $this->wait_request_archive($result["id"]);
+    }
+
+    /**
+     * Returns search resutls from Company Website Finder.
+     *
+     * @param string|array $query The query or queries to search for business names information.
+     * @param string|array $fields Optional parameter to specify which fields to return. Default is empty string.
+     * @param bool $async_request Whether to run the request asynchronously. Default is false.
+     *
+     * @return array request/task result
+     */
+    public function company_website_finder(
+        string|array $query,
+        string|array $fields = '',
+        bool $async_request = false
+        ) : array {
+        $params = http_build_query(array(
+            "query" => $query,
+            'fields'=> $fields,
+            'async' => $async_request,
+        ));
+        $result = $this->make_get_request("compamany-website-finder?{$params}");
         return $this->wait_request_archive($result["id"]);
     }
 }
