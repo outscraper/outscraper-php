@@ -10,7 +10,7 @@
  * @link       https://github.com/outscraper/outscraper-php
  */
 class OutscraperClient {
-    public $version = "4.2.1";
+    public $version = "4.2.2";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -1131,6 +1131,48 @@ class OutscraperClient {
         ));
         $result = $this->make_get_request("compamany-website-finder?{$params}");
         return $this->wait_request_archive($result["id"]);
+    }
+
+    /**
+     * Returns search results from Yellow Pages.
+     *
+     * @param string|array $query Categories to search for (e.g., bars, restaurants, dentists). It supports batching by sending arrays with up to 250 queries (e.g., query=text1&query=text2&query=text3). It allows multiple queries to be sent in one request and to save on network latency time.
+     * @param string $location The parameter specifies where to search (e.g., New York, NY). Default: "New York, NY".
+     * @param int $limit The parameter specifies the limit of items to get from one query. Default: 100.
+     * @param string|null $region The parameter specifies the country to use for website. It's recommended to use it for a better search experience. Available values: "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AG", "AR", "AM", "AU", "AT", "AZ", "BS", "BH", "BD", "BY", "BE", "BZ", "BJ", "BT", "BO", "BA", "BW", "BR", "VG", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "CF", "TD", "CL", "CN", "CO", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "EE", "ET", "FJ", "FI", "FR", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GT", "GG", "GY", "HT", "HN", "HK", "HU", "IS", "IN", "ID", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KW", "KG", "LA", "LV", "LB", "LS", "LY", "LI", "LT", "LU", "MG", "MW", "MY", "MV", "ML", "MT", "MU", "MX", "FM", "MD", "MN", "ME", "MS", "MA", "MQ", "MZ", "MM", "NA", "NR", "NP", "NL", "NZ", "NI", "NE", "NG", "NU", "MK", "NO", "OM", "PK", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RO", "RU", "RW", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "KR", "ES", "LK", "SH", "VC", "SR", "SE", "CH", "TW", "TJ", "TZ", "TH", "TL", "TG", "TO", "TT", "TN", "TR", "TM", "VI", "UG", "UA", "AE", "GB", "US", "UY", "UZ", "VU", "VE", "VN", "ZM", "ZW".
+     * @param array|null $enrichment The parameter defines an enrichment or enrichments you want to apply to the results. Available values: "domains_service" (Emails & Contacts Scraper), "emails_validator_service" (Email Address Verifier), "company_websites_finder" (Company Website Finder), "disposable_email_checker" (Disposable Emails Checker), "company_insights_service" (Company Insights), "phones_enricher_service" (Phone Numbers Enricher), "trustpilot_service" (Trustpilot Scraper), "whitepages_phones" (Phone Identity Finder), "ai_chain_info" (Chain Info). Using enrichments increases the time of the response.
+     * @param array $fields The parameter defines which fields you want to include with each item returned in the response. By default, it returns all fields.
+     * @param bool $async_request The parameter defines the way you want to submit your task to Outscraper. It can be set to `False` to open an HTTP connection and keep it open until you got your results, or `True` (default) to just submit your requests to Outscraper and retrieve them later with the Request Results endpoint. Default: True.
+     * @param bool|null $ui The parameter defines whether a task will be executed as a UI task. This is commonly used when you want to create a regular platform task with API. Using this parameter overwrites the async_request parameter to `True`. Default: False.
+     * @param string|null $webhook The parameter defines the URL address (callback) to which Outscraper will create a POST request with a JSON body once a task/request is finished. Using this parameter overwrites the webhook from integrations.
+     *
+     * @return array JSON result
+     */
+    public function yellowpages_search(
+        string|array $query,
+        string $location = 'New York, NY',
+        int $limit = 100,
+        ?string $region = null,
+        ?array $enrichment = null,
+        ?array $fields = null,
+        bool $async_request = true,
+        ?bool $ui = null,
+        ?string $webhook = null
+    ) : array {
+        $params = http_build_query(array(
+            'query' => $query,
+            'location' => $location,
+            'limit' => $limit,
+            'region' => $region,
+            'enrichment' => $enrichment,
+            'fields' => $fields,
+            'async' => $async_request,
+            'ui' => $ui,
+            'webhook' => $webhook,
+        ));
+
+        $result = $this->make_get_request("yellowpages-search?{$params}");
+        return $this->wait_request_archive($result['id']);
     }
 }
 
