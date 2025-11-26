@@ -499,6 +499,62 @@ class OutscraperClient {
     }
 
     /**
+     * Contacts and Leads Scraper.
+     *
+     * Returns emails, social links, phones, and other contacts from websites
+     * based on domain names or URLs. Supports batching by sending arrays with
+     * up to 250 queries and allows multiple queries to be sent in one request
+     * to save on network latency.
+     *
+     * @param string|array      $query              Company domains or URLs
+     *                                             (e.g. 'outscraper.com' or ['tesla.com', 'microsoft.com']).
+     * @param string|array      $fields             Defines which fields to include in each returned item.
+     *                                             By default, all fields are returned.
+     * @param bool              $async_request      Whether to run the request asynchronously.
+     *                                             Default is true.
+     * @param string|array|null $preferred_contacts Contact roles you want to prioritize
+     *                                             (e.g. 'influencers', 'technical', ['decision makers', 'sales']).
+     * @param int               $contacts_per_company Number of contacts to return per company. Default is 3.
+     * @param int               $emails_per_contact   Number of email addresses to return per contact. Default is 1.
+     * @param bool              $general_emails     Whether to include only general emails
+     *                                             (info@, support@, etc.) or only non-general emails
+     *                                             (paul@, john@, etc.). Default is false.
+     * @param bool              $ui                 Execute as a UI task. Overrides async mode on the API side.
+     *                                             Default is false.
+     * @param string|null       $webhook            URL for callback notifications when a task completes.
+     *
+     * @return array Request/task result. If $async_request is true, returns the task meta
+     *               (with ID). If false, waits for completion and returns the archived result.
+     */
+    public function contacts_and_leads(
+        string|array $query,
+        string|array $fields = [],
+        bool $async_request = true,
+        string|array|null $preferred_contacts = null,
+        int $contacts_per_company = 3,
+        int $emails_per_contact = 1,
+        bool $general_emails = false,
+        bool $ui = false,
+        ?string $webhook = null
+    ): array {
+        $params = http_build_query([
+            'query'               => (array) $query,
+            'fields'              => $fields,
+            'async'               => $async_request,
+            'preferred_contacts'  => $preferred_contacts,
+            'contacts_per_company'=> $contacts_per_company,
+            'emails_per_contact'  => $emails_per_contact,
+            'general_emails'      => $general_emails,
+            'ui'                  => $ui,
+            'webhook'             => $webhook,
+        ]);
+
+        $result = $this->make_get_request("contacts-and-leads?{$params}");
+
+        return $async_request ? $result : $this->wait_request_archive($result['id']);
+    }
+
+    /**
      * Return email addresses, social links and phones from domains in seconds.
      *
      * @param array $query Domains or links (e.g., outscraper.com).
