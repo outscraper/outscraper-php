@@ -504,46 +504,54 @@ class OutscraperClient {
      * Returns emails, social links, phones, and other contacts from websites
      * based on domain names or URLs. Supports batching by sending arrays with
      * up to 250 queries and allows multiple queries to be sent in one request
-     * to save on network latency.
+     * to save on network latency time.
      *
-     * @param string|array      $query              Company domains or URLs
-     *                                             (e.g. 'outscraper.com' or ['tesla.com', 'microsoft.com']).
-     * @param string|array      $fields             Defines which fields to include in each returned item.
-     *                                             By default, all fields are returned.
-     * @param bool              $async_request      Whether to run the request asynchronously.
-     *                                             Default is true.
-     * @param string|array|null $preferred_contacts Contact roles you want to prioritize
-     *                                             (e.g. 'influencers', 'technical', ['decision makers', 'sales']).
-     * @param int               $contacts_per_company Number of contacts to return per company. Default is 3.
-     * @param int               $emails_per_contact   Number of email addresses to return per contact. Default is 1.
-     * @param bool              $general_emails     Whether to include only general emails
-     *                                             (info@, support@, etc.) or only non-general emails
-     *                                             (paul@, john@, etc.). Default is false.
-     * @param bool              $ui                 Execute as a UI task. Overrides async mode on the API side.
-     *                                             Default is false.
-     * @param string|null       $webhook            URL for callback notifications when a task completes.
+     * @param string|array      $query                 Company domains or URLs
+     *                                                (e.g. 'outscraper.com' or ['tesla.com', 'microsoft.com']).
+     * @param string|array|null $fields                Defines which fields to include in each returned item.
+     *                                                By default, all fields are returned.
+     * @param bool              $async_request         The parameter defines the way you want to submit your task.
+     *                                                When true, the request is submitted asynchronously and the
+     *                                                method returns the task meta (ID). When false, the client
+     *                                                waits for the archived result and returns the final data.
+     * @param string|array|null $preferred_contacts    Contact roles you want to prioritize
+     *                                                (e.g. 'influencers', 'technical', ['decision makers', 'sales']).
+     * @param int               $contacts_per_company  Number of contacts to return per company. Default is 3.
+     * @param int               $emails_per_contact    Number of email addresses to return per contact. Default is 1.
+     * @param int               $skip_contacts         Number of contacts to skip (for pagination). Default is 0.
+     * @param bool              $general_emails        Whether to include only general emails
+     *                                                (info@, support@, etc.) or only non-general emails
+     *                                                (paul@, john@, etc.). Default is false.
+     * @param bool              $ui                    Execute as a UI task. On the API side this forces async mode.
+     *                                                Default is false.
+     * @param string|null       $webhook               URL for callback notifications when a task completes.
      *
      * @return array Request/task result. If $async_request is true, returns the task meta
-     *               (with ID). If false, waits for completion and returns the archived result.
+     *               (with ID). If false, waits for completion and returns the archived result data.
      */
     public function contacts_and_leads(
         string|array $query,
-        string|array $fields = [],
+        string|array|null $fields = null,
         bool $async_request = true,
         string|array|null $preferred_contacts = null,
         int $contacts_per_company = 3,
         int $emails_per_contact = 1,
+        int $skip_contacts = 0,
         bool $general_emails = false,
         bool $ui = false,
         ?string $webhook = null
     ): array {
+        $queries    = (array) $query;
+        $wait_async = $async_request || count($queries) > 1;
+
         $params = http_build_query([
-            'query'               => (array) $query,
+            'query'               => $queries,
             'fields'              => $fields,
-            'async'               => $async_request,
+            'async'               => $wait_async,
             'preferred_contacts'  => $preferred_contacts,
             'contacts_per_company'=> $contacts_per_company,
             'emails_per_contact'  => $emails_per_contact,
+            'skip_contacts'       => $skip_contacts,
             'general_emails'      => $general_emails,
             'ui'                  => $ui,
             'webhook'             => $webhook,
@@ -551,7 +559,11 @@ class OutscraperClient {
 
         $result = $this->make_get_request("contacts-and-leads?{$params}");
 
-        return $async_request ? $result : $this->wait_request_archive($result['id']);
+        if ($async_request) {
+            return $result;
+        }
+
+        return $this->wait_request_archive($result['id']);
     }
 
     /**
