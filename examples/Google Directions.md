@@ -37,13 +37,6 @@ $client = new OutscraperClient("SECRET_API_KEY");
 
 ```php
 # Returns directions:
-$origins = ['29.696596,76.994928', '29.696596,76.994928'];
-$destinations = ['30.715966244353,76.8053887016268', '30.723065,76.770169'];
-
-$results = $client->google_maps_directions(
-    $origins,
-    $destinations,
-    async_request: false
-);
-
+$result = $client->google_maps_directions(['29.696596, 76.994928    30.7159662444353, 76.8053887016268', 
+    '29.696596, 76.994928    30.723065, 76.770169']);
 ```
