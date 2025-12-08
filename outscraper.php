@@ -9,6 +9,24 @@
  * @version    Release: 4.2.3
  * @link       https://github.com/outscraper/outscraper-php
  */
+
+const QUERY_DELIMITER = '    ';
+
+function format_direction_queries(string|array $q): array {
+    if (is_array($q) && !empty($q) && is_array($q[0])) {
+        return array_map(
+            fn($pair) => implode(QUERY_DELIMITER, $pair),
+            $q
+        );
+    }
+
+    if (is_array($q)) {
+        return $q;
+    }
+
+    return [$q];
+}
+
 class OutscraperClient {
     public $version = "4.2.3";
     private $api_url = "https://api.app.outscraper.com";
@@ -278,8 +296,7 @@ class OutscraperClient {
      * @return array The directions results or task ID if asynchronous request is enabled.
      */
     public function google_maps_directions(
-        string|array $origin = '',
-        string|array $destination = '',
+        string|array $query,
         ?string $departure_time = null,
         ?string $finish_time = null,
         ?string $interval = null,
@@ -289,9 +306,9 @@ class OutscraperClient {
         ?array $fields = null,
         bool $async_request = true
     ): array {
+        $queries = format_direction_queries($query);
         $params = http_build_query([
-            'origin'        => (array) $origin,
-            'destination'   => (array) $destination,
+            'query'         => $queries,
             'departure_time'=> $departure_time,
             'finish_time'   => $finish_time,
             'interval'      => $interval,
