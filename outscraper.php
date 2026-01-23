@@ -6,7 +6,7 @@
  *
  * @copyright  Outscraper 2025
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
- * @version    Release: 4.2.3
+ * @version    Release: 4.2.4
  * @link       https://github.com/outscraper/outscraper-php
  */
 
@@ -87,6 +87,47 @@ class OutscraperClient {
         }
 
         return $result;
+    }
+
+    private function make_post_request(string $path, array $payload = []): array {
+        $ch = curl_init();
+
+        $json = json_encode($payload);
+
+        curl_setopt($ch, CURLOPT_URL, "{$this->api_url}/{$path}");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge(
+            $this->api_headers,
+            ["Content-Type: application/json"]
+        ));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+
+        $result = json_decode(curl_exec($ch), true);
+
+        if (curl_errno($ch)) {
+            throw new Exception("API Error: " . curl_error($ch));
+        }
+        curl_close($ch);
+
+        if (is_array($result) && array_key_exists("error", $result) && $result["error"] == TRUE) {
+            throw new Exception($result["errorMessage"]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Low-level POST helper (Node-like naming).
+     *
+     * @param string $path API path (e.g. "/businesses")
+     * @param array $parameters JSON payload
+     *
+     * @return array decoded JSON response
+     */
+    public function postAPIRequest(string $path, array $parameters = []): array {
+        $path = ltrim($path, '/');
+        return $this->make_post_request($path, $parameters);
     }
 
     /**
@@ -1259,6 +1300,127 @@ class OutscraperClient {
 
         $result = $this->make_get_request("yellowpages-search?{$params}");
         return $this->wait_request_archive($result['id']);
+    }
+
+    /**
+     * POST /businesses
+     *
+     * Mirrors Node businessesSearch payload:
+     *  - filters (array)
+     *  - limit (int)
+     *  - include_total (bool)
+     *  - cursor (string|null)
+     *  - fields (array|null)
+     *  - async (bool)
+     *  - ui (bool)
+     *  - webhook (string|null)
+     */
+    public function businessesSearch(
+        array $filters = [],
+        int $limit = 10,
+        bool $include_total = false,
+        ?string $cursor = null,
+        ?array $fields = null,
+        bool $async_request = false,
+        bool $ui = false,
+        ?string $webhook = null
+    ): array {
+        $payload = array_filter([
+            'filters' => $filters ?: (object)[],
+            'limit' => $limit,
+            'include_total' => $include_total,
+            'cursor' => $cursor,
+            'fields' => $fields,
+            'async' => $async_request,
+            'ui' => $ui,
+            'webhook' => $webhook,
+        ], fn($v) => $v !== null);
+
+        $result = $this->make_post_request("businesses", $payload);
+
+        return $result;
+    }
+
+    /**
+     * Auto-pagination for /businesses (like Node businessesIterSearch),
+     * returns merged "items" array (all businesses across pages).
+     */
+    public function businessesIterSearch(
+        array $filters = [],
+        int $limit = 10,
+        ?array $fields = null,
+        bool $include_total = false
+    ): array {
+        $cursor = null;
+        $all_items = [];
+
+        while (true) {
+            $page = $this->businessesSearch(
+                $filters,
+                $limit,
+                $include_total,
+                $cursor,
+                $fields,
+                false
+            );
+
+            $items = $page['items'] ?? [];
+            if (!is_array($items) || count($items) === 0) {
+                break;
+            }
+
+            $all_items = array_merge($all_items, $items);
+
+            $has_more = (bool)($page['has_more'] ?? false);
+            $next_cursor = $page['next_cursor'] ?? null;
+
+            if (!$has_more || !$next_cursor) {
+                break;
+            }
+
+            $cursor = (string)$next_cursor;
+        }
+
+        return $all_items;
+    }
+
+    /**
+     * GET /businesses/{business_id}
+     *
+     * @param string $business_id Outscraper ID (or whichever id your API expects in path)
+     * @param string|array|null $fields Fields to request (array -> comma-separated, like JS)
+     * @param bool $async_request
+     * @param bool $ui
+     * @param string|null $webhook
+     */
+    public function businessesGetDetails(
+        string $business_id,
+        string|array|null $fields = null,
+        bool $async_request = false,
+        bool $ui = false,
+        ?string $webhook = null
+    ): array {
+        if (!$business_id) {
+            throw new Exception("business_id must have a value");
+        }
+
+        $fields_param = $fields;
+        if (is_array($fields)) {
+            $fields_param = implode(',', $fields);
+        }
+
+        $params = http_build_query(array_filter([
+            'fields' => $fields_param,
+            'async' => $async_request,
+            'ui' => $ui,
+            'webhook' => $webhook,
+        ], fn($v) => $v !== null));
+
+        $encoded_id = rawurlencode($business_id);
+
+        $result = $this->make_get_request("businesses/{$encoded_id}?{$params}");
+
+        return $result;
     }
 }
 
