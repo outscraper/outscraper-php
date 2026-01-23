@@ -1393,7 +1393,7 @@ class OutscraperClient {
      * @param bool $ui
      * @param string|null $webhook
      */
-    public function businessesGetDetails(
+    public function businessesGet(
         string $business_id,
         string|array|null $fields = null,
         bool $async_request = false,
