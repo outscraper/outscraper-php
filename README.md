@@ -35,7 +35,7 @@ require_once('/path/to/outscraper-php/init.php');
 ```php
 $client = new OutscraperClient("SECRET_API_KEY");
 ```
-[Link to the profile page to create the API key](https://app.outscraper.com/profile)
+[Link to the account page to create the API key](https://app.outscraper.com/account/api)
 
 ## Google Maps Scraper
 
