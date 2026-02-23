@@ -6,7 +6,7 @@
  *
  * @copyright  Outscraper 2025
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
- * @version    Release: 4.2.4
+ * @version    Release: 4.2.5
  * @link       https://github.com/outscraper/outscraper-php
  */
 
@@ -28,7 +28,7 @@ function format_direction_queries(string|array $q): array {
 }
 
 class OutscraperClient {
-    public $version = "4.2.3";
+    public $version = "4.2.5";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -1307,6 +1307,7 @@ class OutscraperClient {
      *
      * Mirrors Node businessesSearch payload:
      *  - filters (array)
+     *  - query (string|null)
      *  - limit (int)
      *  - include_total (bool)
      *  - cursor (string|null)
@@ -1323,10 +1324,12 @@ class OutscraperClient {
         ?array $fields = null,
         bool $async_request = false,
         bool $ui = false,
-        ?string $webhook = null
+        ?string $webhook = null,
+        ?string $query = null
     ): array {
         $payload = array_filter([
             'filters' => $filters ?: (object)[],
+            'query' => $query,
             'limit' => $limit,
             'include_total' => $include_total,
             'cursor' => $cursor,
@@ -1334,7 +1337,7 @@ class OutscraperClient {
             'async' => $async_request,
             'ui' => $ui,
             'webhook' => $webhook,
-        ], fn($v) => $v !== null);
+        ], fn($v) => $v !== null && $v !== '');
 
         $result = $this->make_post_request("businesses", $payload);
 
