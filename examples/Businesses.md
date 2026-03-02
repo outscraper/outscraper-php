@@ -153,6 +153,24 @@ foreach ($items as $business) {
 }
 ```
 
+### 5) Search with enrichments and contacts limits
+
+```php
+$page = $client->businessesSearch(
+    filters: ['country_code' => 'US', 'states' => ['CA']],
+    limit: 25,
+    enrichments: ['contacts_n_leads'],
+    contacts_per_company: 5,
+    emails_per_contact: 2
+);
+```
+
+Notes:
+- `contacts_per_company` and `emails_per_contact` require `enrichments` to include `contacts_n_leads`.
+- If `contacts_n_leads` is set and limits are omitted, SDK defaults are used:
+  - `contacts_per_company = 3`
+  - `emails_per_contact = 1`
+
 ---
 
 See also: [Businesses / POI API docs](https://app.outscraper.com/api-docs#tag/Businesses).

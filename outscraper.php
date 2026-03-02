@@ -28,7 +28,7 @@ function format_direction_queries(string|array $q): array {
 }
 
 class OutscraperClient {
-    public $version = "4.2.5";
+    public $version = "4.2.6";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -1308,6 +1308,9 @@ class OutscraperClient {
      * Mirrors Node businessesSearch payload:
      *  - filters (array)
      *  - query (string|null)
+     *  - enrichments (array|null)
+     *  - contacts_per_company (int|null)
+     *  - emails_per_contact (int|null)
      *  - limit (int)
      *  - include_total (bool)
      *  - cursor (string|null)
@@ -1325,8 +1328,43 @@ class OutscraperClient {
         bool $async_request = false,
         bool $ui = false,
         ?string $webhook = null,
-        ?string $query = null
+        ?string $query = null,
+        ?array $enrichments = null,
+        ?int $contacts_per_company = null,
+        ?int $emails_per_contact = null
     ): array {
+        if ($contacts_per_company !== null && $contacts_per_company < 1) {
+            throw new InvalidArgumentException("contacts_per_company must be >= 1");
+        }
+
+        if ($emails_per_contact !== null && $emails_per_contact < 1) {
+            throw new InvalidArgumentException("emails_per_contact must be >= 1");
+        }
+
+        $enrichments_payload = [];
+        if (is_array($enrichments) && !empty($enrichments)) {
+            foreach ($enrichments as $value) {
+                if ($value === null) {
+                    continue;
+                }
+
+                $normalized = trim((string)$value);
+                if ($normalized !== '') {
+                    $enrichments_payload[] = $normalized;
+                }
+            }
+        }
+
+        $has_contacts_enrichment = in_array('contacts_n_leads', $enrichments_payload, true);
+        if ($has_contacts_enrichment) {
+            $contacts_per_company = $contacts_per_company ?? 3;
+            $emails_per_contact = $emails_per_contact ?? 1;
+        } elseif ($contacts_per_company !== null || $emails_per_contact !== null) {
+            throw new InvalidArgumentException(
+                'contacts_per_company and emails_per_contact require enrichments to include "contacts_n_leads"'
+            );
+        }
+
         $payload = array_filter([
             'filters' => $filters ?: (object)[],
             'query' => $query,
@@ -1334,6 +1372,9 @@ class OutscraperClient {
             'include_total' => $include_total,
             'cursor' => $cursor,
             'fields' => $fields,
+            'enrichments' => !empty($enrichments_payload) ? $enrichments_payload : null,
+            'contacts_per_company' => $contacts_per_company,
+            'emails_per_contact' => $emails_per_contact,
             'async' => $async_request,
             'ui' => $ui,
             'webhook' => $webhook,
@@ -1347,12 +1388,18 @@ class OutscraperClient {
     /**
      * Auto-pagination for /businesses (like Node businessesIterSearch),
      * returns merged "items" array (all businesses across pages).
+     *
+     * contacts_per_company and emails_per_contact are supported only when
+     * enrichments includes "contacts_n_leads".
      */
     public function businessesIterSearch(
         array $filters = [],
         int $limit = 10,
         ?array $fields = null,
-        bool $include_total = false
+        bool $include_total = false,
+        ?array $enrichments = null,
+        ?int $contacts_per_company = null,
+        ?int $emails_per_contact = null
     ): array {
         $cursor = null;
         $all_items = [];
@@ -1364,7 +1411,13 @@ class OutscraperClient {
                 $include_total,
                 $cursor,
                 $fields,
-                false
+                false,
+                false,
+                null,
+                null,
+                $enrichments,
+                $contacts_per_company,
+                $emails_per_contact
             );
 
             $items = $page['items'] ?? [];
