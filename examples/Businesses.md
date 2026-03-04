@@ -153,24 +153,30 @@ foreach ($items as $business) {
 }
 ```
 
-### 5) Search with enrichments and contacts limits
+### 5) Search with enrichments (recommended dict format)
 
 ```php
+$filters = [
+    'country_code' => 'US',
+    'states' => ['CA', 'NY'],
+    'types' => ['restaurant', 'cafe'],
+];
+
+$enrichments = [
+    'contacts_n_leads' => [
+        'contacts_per_company' => 4,
+        'emails_per_contact' => 2,
+    ],
+    'company_insights' => new stdClass(), // empty object
+];
+
 $page = $client->businessesSearch(
-    filters: ['country_code' => 'US', 'states' => ['CA']],
+    filters: $filters,
     limit: 25,
-    enrichments: ['contacts_n_leads'],
-    contacts_per_company: 5,
-    emails_per_contact: 2
+    fields: ['name', 'website', 'phone'],
+    query: null,
+    enrichments: $enrichments
 );
+
+print_r($page);
 ```
-
-Notes:
-- `contacts_per_company` and `emails_per_contact` require `enrichments` to include `contacts_n_leads`.
-- If `contacts_n_leads` is set and limits are omitted, SDK defaults are used:
-  - `contacts_per_company = 3`
-  - `emails_per_contact = 1`
-
----
-
-See also: [Businesses / POI API docs](https://app.outscraper.com/api-docs#tag/Businesses).

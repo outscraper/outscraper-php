@@ -1308,9 +1308,7 @@ class OutscraperClient {
      * Mirrors Node businessesSearch payload:
      *  - filters (array)
      *  - query (string|null)
-     *  - enrichments (array|null)
-     *  - contacts_per_company (int|null)
-     *  - emails_per_contact (int|null)
+     *  - enrichments (array|string|null)
      *  - limit (int)
      *  - include_total (bool)
      *  - cursor (string|null)
@@ -1329,52 +1327,16 @@ class OutscraperClient {
         bool $ui = false,
         ?string $webhook = null,
         ?string $query = null,
-        ?array $enrichments = null,
-        ?int $contacts_per_company = null,
-        ?int $emails_per_contact = null
+        $enrichments = null
     ): array {
-        if ($contacts_per_company !== null && $contacts_per_company < 1) {
-            throw new InvalidArgumentException("contacts_per_company must be >= 1");
-        }
-
-        if ($emails_per_contact !== null && $emails_per_contact < 1) {
-            throw new InvalidArgumentException("emails_per_contact must be >= 1");
-        }
-
-        $enrichments_payload = [];
-        if (is_array($enrichments) && !empty($enrichments)) {
-            foreach ($enrichments as $value) {
-                if ($value === null) {
-                    continue;
-                }
-
-                $normalized = trim((string)$value);
-                if ($normalized !== '') {
-                    $enrichments_payload[] = $normalized;
-                }
-            }
-        }
-
-        $has_contacts_enrichment = in_array('contacts_n_leads', $enrichments_payload, true);
-        if ($has_contacts_enrichment) {
-            $contacts_per_company = $contacts_per_company ?? 3;
-            $emails_per_contact = $emails_per_contact ?? 1;
-        } elseif ($contacts_per_company !== null || $emails_per_contact !== null) {
-            throw new InvalidArgumentException(
-                'contacts_per_company and emails_per_contact require enrichments to include "contacts_n_leads"'
-            );
-        }
-
         $payload = array_filter([
             'filters' => $filters ?: (object)[],
             'query' => $query,
+            'enrichments' => $enrichments,
             'limit' => $limit,
             'include_total' => $include_total,
             'cursor' => $cursor,
             'fields' => $fields,
-            'enrichments' => !empty($enrichments_payload) ? $enrichments_payload : null,
-            'contacts_per_company' => $contacts_per_company,
-            'emails_per_contact' => $emails_per_contact,
             'async' => $async_request,
             'ui' => $ui,
             'webhook' => $webhook,
@@ -1388,18 +1350,15 @@ class OutscraperClient {
     /**
      * Auto-pagination for /businesses (like Node businessesIterSearch),
      * returns merged "items" array (all businesses across pages).
-     *
-     * contacts_per_company and emails_per_contact are supported only when
-     * enrichments includes "contacts_n_leads".
+     * Supports optional AI plain text query and enrichments (same as businessesSearch).
      */
     public function businessesIterSearch(
         array $filters = [],
         int $limit = 10,
         ?array $fields = null,
         bool $include_total = false,
-        ?array $enrichments = null,
-        ?int $contacts_per_company = null,
-        ?int $emails_per_contact = null
+        ?string $query = null,
+        $enrichments = null
     ): array {
         $cursor = null;
         $all_items = [];
@@ -1414,10 +1373,8 @@ class OutscraperClient {
                 false,
                 false,
                 null,
-                null,
-                $enrichments,
-                $contacts_per_company,
-                $emails_per_contact
+                $query,
+                $enrichments
             );
 
             $items = $page['items'] ?? [];
