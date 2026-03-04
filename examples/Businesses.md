@@ -153,6 +153,30 @@ foreach ($items as $business) {
 }
 ```
 
----
+### 5) Search with enrichments (recommended dict format)
 
-See also: [Businesses / POI API docs](https://app.outscraper.com/api-docs#tag/Businesses).
+```php
+$filters = [
+    'country_code' => 'US',
+    'states' => ['CA', 'NY'],
+    'types' => ['restaurant', 'cafe'],
+];
+
+$enrichments = [
+    'contacts_n_leads' => [
+        'contacts_per_company' => 4,
+        'emails_per_contact' => 2,
+    ],
+    'company_insights' => new stdClass(), // empty object
+];
+
+$page = $client->businessesSearch(
+    filters: $filters,
+    limit: 25,
+    fields: ['name', 'website', 'phone'],
+    query: null,
+    enrichments: $enrichments
+);
+
+print_r($page);
+```
