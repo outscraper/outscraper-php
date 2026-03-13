@@ -28,7 +28,7 @@ function format_direction_queries(string|array $q): array {
 }
 
 class OutscraperClient {
-    public $version = "4.2.5";
+    public $version = "4.2.6";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -1308,6 +1308,7 @@ class OutscraperClient {
      * Mirrors Node businessesSearch payload:
      *  - filters (array)
      *  - query (string|null)
+     *  - enrichments (array|string|null)
      *  - limit (int)
      *  - include_total (bool)
      *  - cursor (string|null)
@@ -1325,11 +1326,13 @@ class OutscraperClient {
         bool $async_request = false,
         bool $ui = false,
         ?string $webhook = null,
-        ?string $query = null
+        ?string $query = null,
+        $enrichments = null
     ): array {
         $payload = array_filter([
             'filters' => $filters ?: (object)[],
             'query' => $query,
+            'enrichments' => $enrichments,
             'limit' => $limit,
             'include_total' => $include_total,
             'cursor' => $cursor,
@@ -1347,12 +1350,15 @@ class OutscraperClient {
     /**
      * Auto-pagination for /businesses (like Node businessesIterSearch),
      * returns merged "items" array (all businesses across pages).
+     * Supports optional AI plain text query and enrichments (same as businessesSearch).
      */
     public function businessesIterSearch(
         array $filters = [],
         int $limit = 10,
         ?array $fields = null,
-        bool $include_total = false
+        bool $include_total = false,
+        ?string $query = null,
+        $enrichments = null
     ): array {
         $cursor = null;
         $all_items = [];
@@ -1364,7 +1370,11 @@ class OutscraperClient {
                 $include_total,
                 $cursor,
                 $fields,
-                false
+                false,
+                false,
+                null,
+                $query,
+                $enrichments
             );
 
             $items = $page['items'] ?? [];
