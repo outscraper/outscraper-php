@@ -6,7 +6,7 @@
  *
  * @copyright  Outscraper 2025
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
- * @version    Release: 4.2.5
+ * @version    Release: 4.2.7
  * @link       https://github.com/outscraper/outscraper-php
  */
 
@@ -28,7 +28,7 @@ function format_direction_queries(string|array $q): array {
 }
 
 class OutscraperClient {
-    public $version = "4.2.6";
+    public $version = "4.2.7";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -616,7 +616,7 @@ class OutscraperClient {
             'webhook'             => $webhook,
         ]);
 
-        $result = $this->make_get_request("contacts-and-leads?{$params}");
+        $result = $this->make_get_request("leads-and-contacts?{$params}");
 
         if ($async_request) {
             return $result;
