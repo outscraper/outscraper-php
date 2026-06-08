@@ -558,7 +558,7 @@ class OutscraperClient {
     }
 
     /**
-     * Contacts and Leads Scraper.
+     * Leads and Contacts Scraper.
      *
      * Returns emails, social links, phones, and other contacts from websites
      * based on domain names or URLs. Supports batching by sending arrays with
@@ -588,7 +588,7 @@ class OutscraperClient {
      * @return array Request/task result. If $async_request is true, returns the task meta
      *               (with ID). If false, waits for completion and returns the archived result data.
      */
-    public function contacts_and_leads(
+    public function leads_and_contacts(
         string|array $query,
         string|array|null $fields = null,
         bool $async_request = true,
@@ -623,6 +623,50 @@ class OutscraperClient {
         }
 
         return $this->wait_request_archive($result['id']);
+    }
+
+    /**
+     * Contacts and Leads Scraper.
+     *
+     * @deprecated Use leads_and_contacts() instead.
+     *
+     * @param string|array      $query                 Company domains or URLs.
+     * @param string|array|null $fields                Defines which fields to include in each returned item.
+     * @param bool              $async_request         The parameter defines the way you want to submit your task.
+     * @param string|array|null $preferred_contacts    Contact roles you want to prioritize.
+     * @param int               $contacts_per_company  Number of contacts to return per company.
+     * @param int               $emails_per_contact    Number of email addresses to return per contact.
+     * @param int               $skip_contacts         Number of contacts to skip.
+     * @param bool              $general_emails        Whether to include only general emails.
+     * @param bool              $ui                    Execute as a UI task.
+     * @param string|null       $webhook               URL for callback notifications when a task completes.
+     *
+     * @return array Request/task result.
+     */
+    public function contacts_and_leads(
+        string|array $query,
+        string|array|null $fields = null,
+        bool $async_request = true,
+        string|array|null $preferred_contacts = null,
+        int $contacts_per_company = 3,
+        int $emails_per_contact = 1,
+        int $skip_contacts = 0,
+        bool $general_emails = false,
+        bool $ui = false,
+        ?string $webhook = null
+    ): array {
+        return $this->leads_and_contacts(
+            $query,
+            $fields,
+            $async_request,
+            $preferred_contacts,
+            $contacts_per_company,
+            $emails_per_contact,
+            $skip_contacts,
+            $general_emails,
+            $ui,
+            $webhook
+        );
     }
 
     /**

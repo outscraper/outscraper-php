@@ -37,5 +37,5 @@ $client = new OutscraperClient('SECRET_API_KEY');
 
 ```php
 # Search contacts from website:
-$results = $client->contacts_and_leads(['outscraper.com']);
+$results = $client->leads_and_contacts(['outscraper.com']);
 ```
