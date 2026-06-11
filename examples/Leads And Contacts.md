@@ -1,6 +1,6 @@
 # Emails And Contacts Scraper With PHP
 
-Allows finding email addresses, social links, and phones from domains via [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Email-Related/paths/~1contacts-and-leads/get).
+Allows finding email addresses, social links, and phones from domains via [Outscraper API](https://app.outscraper.cloud/api-docs#tag/Email-Related/paths/~1leads-and-contacts/get).
 
 ## Installation
 
@@ -37,5 +37,5 @@ $client = new OutscraperClient('SECRET_API_KEY');
 
 ```php
 # Search contacts from website:
-$results = $client->contacts_and_leads(['outscraper.com']);
+$results = $client->leads_and_contacts(['outscraper.com']);
 ```
