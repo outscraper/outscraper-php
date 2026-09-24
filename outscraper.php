@@ -6,7 +6,7 @@
  *
  * @copyright  Outscraper 2025
  * @license    https://raw.githubusercontent.com/outscraper/outscraper-php/main/LICENSE
- * @version    Release: 4.2.7
+ * @version    Release: 4.2.8
  * @link       https://github.com/outscraper/outscraper-php
  */
 
@@ -28,7 +28,7 @@ function format_direction_queries(string|array $q): array {
 }
 
 class OutscraperClient {
-    public $version = "4.2.7";
+    public $version = "4.2.8";
     private $api_url = "https://api.app.outscraper.com";
     private $api_headers;
     private $max_ttl = 60 * 60;
@@ -859,18 +859,20 @@ class OutscraperClient {
      * @param string|array $query The query or queries to search for on TripAdvisor.
      * @param int $limit The maximum number of reviews to retrieve. Default is 100.
      * @param bool $async_request Whether to run the request asynchronously. Default is false.
-     *
+     * @param string $language Language to use for the website. Default is 'default'
      * @return array The result of the reviews request or the request ID if async_request is true.
      */
     public function tripadvisor_reviews(
         string|array $query,
         int $limit = 100,
-        bool $async_request = false
+        bool $async_request = false,
+        string $language = 'default'
     ): array {
         $params = http_build_query([
             'query' => (array) $query,
             'limit' => $limit,
             'async' => $async_request,
+            'language' => $language,
         ]);
 
         $result = $this->make_get_request("tripadvisor-reviews?{$params}");
